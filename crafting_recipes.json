@@ -1,0 +1,13 @@
+{
+    "red_pill": {
+        "pattern": ["   ", " R ", "   "],
+        "key": {
+            "R": {
+                "item": "red_rect"
+            }
+        },
+        "result": {
+            "item": "red_pill"
+        }
+    }
+}
