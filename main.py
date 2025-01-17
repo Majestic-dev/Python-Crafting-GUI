@@ -1,154 +1,31 @@
 import pygame
 
+from inventory import ItemList
+
 pygame.init()
 screen = pygame.display.set_mode(size=(600, 600))
 clock = pygame.time.Clock()
 
-last_pos = None
-
-inventory = {
-    "0": {
-        "name": "red",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "red",
-        "placed": False,
-        "pos": None
-    },
-    "1": {
-        "name": "green",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "green",
-        "placed": False,
-        "pos": None
-    },
-    "2": {
-        "name": "blue",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "blue",
-        "placed": False,
-        "pos": None
-    },
-    "3": {
-        "name": "yellow",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "yellow",
-        "placed": False,
-        "pos": None
-    },
-    "4": {
-        "name": "purple",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "purple",
-        "placed": False,
-        "pos": None
-    },
-    "5": {
-        "name": "orange",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "orange",
-        "placed": False,
-        "pos": None
-    },
-    "6": {
-        "name": "pink",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "pink",
-        "placed": False,
-        "pos": None
-    },
-    "7": {
-        "name": "cyan",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "cyan",
-        "placed": False,
-        "pos": None
-    },
-    "8": {
-        "name": "brown",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "brown",
-        "placed": False,
-        "pos": None
-    },
-    "9": {
-        "name": "black",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "black",
-        "placed": False,
-        "pos": None
-    },
-    "a": {
-        "name": "white",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "white",
-        "placed": False,
-        "pos": None
-    },
-    "b": {
-        "name": "gray",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "gray",
-        "placed": False,
-        "pos": None
-    },
-    "c": {
-        "name": "lime",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "lime",
-        "placed": False,
-        "pos": None
-    },
-    "d": {
-        "name": "magenta",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "magenta",
-        "placed": False,
-        "pos": None
-    },
-    "e": {
-        "name": "teal",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "teal",
-        "placed": False,
-        "pos": None
-    },
-    "f": {
-        "name": "navy",
-        "rect": pygame.rect.Rect((pygame.mouse.get_pos()), (50, 50)),
-        "color": "navy",
-        "placed": False,
-        "pos": None
-    }
-}
-
-
 grid = {}
 
-inventory_pages = {}
-
-current_rects = {}
+displayed_rects = {}
 
 current_page = 1
 current_item = None
 
-for i, item in enumerate(inventory):
-    if int((i + 1) / 11 + 1) not in inventory_pages:
-        inventory_pages[int((i + 1) / 11 + 1)] = []
-    inventory_pages[int((i + 1) / 11 + 1)].append(item)
+ItemList = ItemList()
+item_list = ItemList.get_item_pages()
+
+textures = {}
+
 
 def snatch_to_middle_of_rect(bg_rect: pygame.rect.Rect, fg_rect: pygame.rect.Rect):
-    for key, item in inventory.items():
-        if item["placed"] and item["pos"] == (bg_rect.centerx - fg_rect.width // 2, bg_rect.centery - fg_rect.height // 2):
-            print(f"Colliding with {key}")
-            return False
-
     return (bg_rect.centerx - fg_rect.width // 2, bg_rect.centery - fg_rect.height // 2)
 
 while True:
     screen.fill("gray")
 
-
-    # Draw the crafting grid
+    # Draw the grid
 
     rects = []
     for row in range(3):
@@ -169,15 +46,25 @@ while True:
         rect=pygame.Rect(0, 0, 600, 75)
     )
 
-    for i, item in enumerate(inventory_pages[current_page]):
-        item_rect = pygame.draw.rect(
-            surface=screen,
-            color=pygame.Color(inventory[item]["color"]),
-            rect=pygame.Rect((55 + i * 50, 10), (40, 40))
-        )
+    for i, item in enumerate(item_list[current_page]):
+        if item_list[current_page][i]["texture"] != None:
+            if item_list[current_page][i]["texture"] not in textures:
+                textures[item_list[current_page][i]["texture"]] = pygame.image.load(item_list[current_page][i]["texture"])
 
-        if i not in current_rects:
-            current_rects[i] = inventory[item]["color"]
+            screen.blit(pygame.transform.scale(textures[item_list[current_page][i]["texture"]], (40, 40)), (55 + i * 50, 10))
+        else:
+            item_rect = pygame.draw.rect(
+                surface=screen,
+                color=pygame.Color(item_list[current_page][i]["color"]),
+                rect=pygame.Rect((55 + i * 50, 10), (40, 40)),
+                border_radius=5
+            )
+
+        if i not in displayed_rects:
+            if item_list[current_page][i]["texture"] != None:
+                displayed_rects[i] = item_list[current_page][i]["texture"]
+            else:
+                displayed_rects[i] = item_list[current_page][i]["color"]
 
         text = pygame.font.Font(None, 36).render(f"{i}", True, "white")
         screen.blit(text, (55 + i * 50, 50))
@@ -187,7 +74,7 @@ while True:
             screen, "black", [[10, 30], [35, 10], [35, 50]]
         )
 
-    if current_page < len(inventory_pages):
+    if current_page < len(item_list):
         right_triangle = pygame.draw.polygon(
             screen, "black", [[590, 30], [565, 10], [565, 50]]
         )
@@ -198,37 +85,35 @@ while True:
             current_item = pygame.key.name(event.key) if pygame.key.name(event.key).isnumeric() else None
 
         if event.type == pygame.QUIT:
-            print(grid)
             pygame.quit()
         
         if pygame.mouse.get_pressed()[0]:
             for i, rect in enumerate(rects):
                 if rect.collidepoint(pygame.mouse.get_pos()):
                     if current_rect != None:
-                        last_pos = snatch_to_middle_of_rect(rect, current_rect)
-                        if last_pos:
+                        if snatch_to_middle_of_rect(rect, current_rect):
                             if rects.index(rect) not in grid:
-                                grid[rects.index(rect)] = current_rects[int(current_item)]
-                            grid[rects.index(rect)] = current_rects[int(current_item)]
+                                grid[rects.index(rect)] = displayed_rects[int(current_item)]
+                            grid[rects.index(rect)] = displayed_rects[int(current_item)]
+                            print(grid)
                     elif current_rect == None:
-                        for key, item in inventory.items():
-                            if item["pos"] == (rect.centerx - 25, rect.centery - 25):
-                                current_item = key
+                        if rects.index(rect) in grid:
+                           del grid[rects.index(rect)]
+                        print(grid)
 
             if current_page > 1:
                 if left_triangle:
                     if left_triangle.collidepoint(pygame.mouse.get_pos()):
                         current_page -= 1
                         current_item = None
-                        current_rects = {}
+                        displayed_rects = {}
             
-            if current_page < len(inventory_pages):
+            if current_page < len(item_list):
                 if right_triangle:
                     if right_triangle.collidepoint(pygame.mouse.get_pos()):
                         current_page += 1
                         current_item = None
-                        current_rects = {}
-                        print(f"Current page: {current_page}, Current item: {current_item}")
+                        displayed_rects = {}
 
     for i, rect in enumerate(rects):
         if rect.collidepoint(pygame.mouse.get_pos()):
@@ -240,22 +125,37 @@ while True:
             )
 
     for i, item in grid.items():
-        pygame.draw.rect(
-            surface=screen,
-            color=pygame.Color(item),
-            rect=pygame.Rect((rects[i].centerx - 25, rects[i].centery - 25), (50, 50)),
-            border_radius=5
-        )
-
-    try:
-        current_rect = (
+        if item != None:
+            try:
+                if item not in textures:
+                    textures[item] = pygame.image.load(item)
+                
+                screen.blit(pygame.transform.scale(textures[item], (50, 50)), (rects[i].centerx - 25, rects[i].centery - 25))
+            except FileNotFoundError:
                 pygame.draw.rect(
                     surface=screen,
-                    color=pygame.Color(current_rects[int(current_item)]),
-                    rect=pygame.Rect((pygame.mouse.get_pos()), (50, 50)),
+                    color=pygame.Color(item),
+                    rect=pygame.Rect((rects[i].centerx - 25, rects[i].centery - 25), (50, 50)),
                     border_radius=5
-                ) if (current_item != None) else None
-            )
+                )
+
+
+    try:
+        if current_item != None and item_list[current_page][int(current_item)]["texture"] != None:
+            if item_list[current_page][int(current_item)]["texture"] not in textures:
+                textures[item_list[current_page][int(current_item)]["texture"]] = pygame.image.load(item_list[current_page][int(current_item)]["texture"])
+
+            texture = pygame.transform.scale(textures[item_list[current_page][int(current_item)]["texture"]], (50, 50))
+            current_rect = screen.blit(texture, pygame.mouse.get_pos())
+        else:
+            current_rect = (
+                    pygame.draw.rect(
+                        surface=screen,
+                        color=pygame.Color(displayed_rects[int(current_item)]),
+                        rect=pygame.Rect((pygame.mouse.get_pos()), (50, 50)),
+                        border_radius=5
+                    ) if (current_item != None) else None
+                )
     except KeyError:
         current_rect = None
 
