@@ -1,3 +1,64 @@
 {
-    
+    "items": {
+        "red_rect": {
+            "name": "red_rect",
+            "texture": "items/textures/Test.jpg",
+            "color": "red"
+        },
+        "blue_circle": {
+            "name": "blue_circle",
+            "texture": "items/textures/ye.jpg",
+            "color": "blue"
+        },
+        "green_triangle": {
+            "name": "green_triangle",
+            "texture": "items/textures/download.jpg",
+            "color": "green"
+        },
+        "yellow_square": {
+            "name": "yellow_square",
+            "texture": "items/textures/ye.jpg",
+            "color": "yellow"
+        },
+        "purple_hexagon": {
+            "name": "purple_hexagon",
+            "texture": "items/textures/download.jpg",
+            "color": "purple"
+        },
+        "orange_pentagon": {
+            "name": "orange_pentagon",
+            "texture": "items/textures/ye.jpg",
+            "color": "orange"
+        },
+        "pink_star": {
+            "name": "pink_star",
+            "texture": "items/textures/download.jpg",
+            "color": "pink"
+        },
+        "brown_oval": {
+            "name": "brown_oval",
+            "texture": "items/textures/ye.jpg",
+            "color": "brown"
+        },
+        "black_diamond": {
+            "name": "black_diamond",
+            "texture": "items/textures/download.jpg",
+            "color": "black"
+        },
+        "white_cross": {
+            "name": "white_cross",
+            "texture": null,
+            "color": "white"
+        },
+        "gray_arrow": {
+            "name": "gray_arrow",
+            "texture": null,
+            "color": "gray"
+        },
+        "cyan_heart": {
+            "name": "cyan_heart",
+            "texture": null,
+            "color": "cyan"
+        }
+    }
 }
