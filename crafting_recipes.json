@@ -3,7 +3,7 @@
         "pattern": ["   ", " R ", "   "],
         "key": {
             "R": {
-                "item": "red_rect"
+                "item": "blue_circle"
             }
         },
         "result": {
